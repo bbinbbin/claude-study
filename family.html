@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>김씨네 가족</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #fdf8f2;
+      --cream:    #fff9f0;
+      --orange:   #ff7043;
+      --coral:    #ff8a65;
+      --pink:     #f48fb1;
+      --warm:     #ffcc80;
+      --text:     #4a3728;
+      --muted:    #9e8575;
+      --card-bg:  #ffffff;
+      --shadow:   rgba(255, 112, 67, 0.15);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ── 배경 orbs ── */
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 520px; height: 520px;
+      background: radial-gradient(circle, rgba(255,204,128,.35), transparent 70%);
+      top: -120px; left: -120px;
+    }
+    body::after {
+      width: 440px; height: 440px;
+      background: radial-gradient(circle, rgba(244,143,177,.28), transparent 70%);
+      bottom: -100px; right: -100px;
+    }
+
+    /* ── 공통 레이아웃 ── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section { padding: 72px 0; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100svh;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      background: linear-gradient(160deg, #fff5e6 0%, #ffe4d6 50%, #fde8f0 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '🏡';
+      position: absolute;
+      font-size: 260px;
+      opacity: .06;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .hero .container { width: 100%; }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,112,67,.12);
+      color: var(--orange);
+      border: 1px solid rgba(255,112,67,.3);
+      border-radius: 999px;
+      padding: 6px 18px;
+      font-size: .8rem;
+      font-weight: 500;
+      letter-spacing: .08em;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 700;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, var(--orange), var(--pink));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2.5vw, 1.25rem);
+      color: var(--muted);
+      font-weight: 300;
+      max-width: 480px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted);
+      font-size: .78rem;
+      animation: bounce 2s infinite;
+    }
+    .scroll-hint span { font-size: 1.2rem; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50%       { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ── SECTION HEADER ── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-header h2 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .section-header p {
+      color: var(--muted);
+      font-size: .95rem;
+      font-weight: 300;
+    }
+    .section-header .line {
+      display: inline-block;
+      width: 48px; height: 3px;
+      border-radius: 2px;
+      background: linear-gradient(90deg, var(--orange), var(--pink));
+      margin: 12px auto 0;
+    }
+
+    /* ── MEMBER CARDS ── */
+    .members { background: var(--cream); }
+
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 36px 28px;
+      text-align: center;
+      box-shadow: 0 4px 24px var(--shadow);
+      transition: transform .3s ease, box-shadow .3s ease;
+      opacity: 0;
+      transform: translateY(30px);
+      border: 1px solid rgba(255,255,255,.8);
+    }
+
+    .card.visible {
+      opacity: 1;
+      transform: translateY(0);
+      transition: opacity .5s ease, transform .5s ease, box-shadow .3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 40px var(--shadow);
+    }
+
+    /* 아기 카드는 hover transform을 별도 처리 */
+    .card.baby-card.visible:hover {
+      transform: translateY(-8px);
+    }
+
+    .card-emoji {
+      font-size: 3.6rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .card h3 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .card-role {
+      font-size: .82rem;
+      font-weight: 500;
+      color: var(--orange);
+      background: rgba(255,112,67,.1);
+      border-radius: 999px;
+      padding: 3px 12px;
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+
+    .card-desc {
+      font-size: .9rem;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      margin-top: 14px;
+    }
+
+    .tag {
+      font-size: .75rem;
+      background: #fff5ee;
+      border: 1px solid rgba(255,112,67,.2);
+      color: var(--coral);
+      border-radius: 999px;
+      padding: 3px 10px;
+    }
+
+    /* ── 아기 카운트다운 ── */
+    .baby-card {
+      border: 2px solid rgba(255,138,101,.3);
+      background: linear-gradient(145deg, #fff, #fff8f5);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .baby-card::before {
+      content: '✨';
+      position: absolute;
+      top: 12px; right: 16px;
+      font-size: 1.1rem;
+      animation: sparkle 2.5s ease-in-out infinite;
+    }
+
+    @keyframes sparkle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: .4; transform: scale(.7); }
+    }
+
+    .dday-box {
+      margin-top: 20px;
+      background: linear-gradient(135deg, #ff7043, #f48fb1);
+      border-radius: 14px;
+      padding: 16px;
+      color: #fff;
+    }
+
+    .dday-label {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .1em;
+      opacity: .85;
+      margin-bottom: 4px;
+    }
+
+    .dday-number {
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .dday-sub {
+      font-size: .75rem;
+      opacity: .8;
+      margin-top: 4px;
+    }
+
+    /* ── MESSAGE ── */
+    .message-section { background: var(--bg); }
+
+    .message-card {
+      background: linear-gradient(135deg, #fff9f5, #fdf0f7);
+      border: 1px solid rgba(255,138,101,.2);
+      border-radius: 24px;
+      padding: 48px 40px;
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto;
+      box-shadow: 0 4px 32px rgba(255,112,67,.08);
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+
+    .message-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .quote-mark {
+      font-size: 4rem;
+      line-height: 1;
+      color: var(--warm);
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .message-card p {
+      font-size: 1.05rem;
+      line-height: 1.9;
+      color: var(--text);
+      font-weight: 300;
+    }
+
+    .message-card p strong {
+      font-weight: 600;
+      color: var(--orange);
+    }
+
+    /* ── VALUES ── */
+    .values-section { background: var(--cream); }
+
+    .values-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 20px;
+    }
+
+    .value-item {
+      text-align: center;
+      padding: 28px 20px;
+      border-radius: 16px;
+      background: white;
+      box-shadow: 0 2px 16px var(--shadow);
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+
+    .value-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .value-icon { font-size: 2.4rem; margin-bottom: 12px; }
+
+    .value-item h4 {
+      font-size: .95rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .value-item p {
+      font-size: .82rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: linear-gradient(135deg, #4a3728, #6d4c41);
+      color: rgba(255,255,255,.8);
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    footer .motto {
+      font-size: 1.15rem;
+      font-weight: 500;
+      color: var(--warm);
+      margin-bottom: 10px;
+    }
+
+    footer p {
+      font-size: .82rem;
+      opacity: .6;
+      line-height: 1.6;
+    }
+
+    /* ── 반응형 ── */
+    @media (max-width: 600px) {
+      section { padding: 56px 0; }
+      .message-card { padding: 36px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HERO ===== -->
+  <section class="hero">
+    <div class="container" id="hero-root"></div>
+    <div class="scroll-hint">
+      <span>↓</span>
+      만나보기
+    </div>
+  </section>
+
+  <!-- ===== MEMBERS ===== -->
+  <section class="members">
+    <div class="container" id="members-root"></div>
+  </section>
+
+  <!-- ===== MESSAGE ===== -->
+  <section class="message-section">
+    <div class="container" id="message-root"></div>
+  </section>
+
+  <!-- ===== VALUES ===== -->
+  <section class="values-section">
+    <div class="container" id="values-root"></div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer id="footer-root"></footer>
+
+  <script>
+    // ── 데이터 객체 ─────────────────────────────────────────────
+    const FAMILY_DATA = {
+      familyName: '김씨네 가족',
+      slogan: '함께여서 더 따뜻한,<br />우리만의 작은 우주',
+      motto: '함께라면 어디든 집이 된다 🏡',
+      year: '2026년 봄',
+      dueDate: '2026-08-07',
+
+      members: [
+        {
+          emoji: '👨',
+          name: '뿌루',
+          role: '가족의 든든한 기둥',
+          desc: '가족을 위해 매일 열심히 달리는<br />우리 집 슈퍼히어로',
+          tags: ['요리', '드라이브', '커피'],
+          type: 'normal'
+        },
+        {
+          emoji: '👩',
+          name: '비니',
+          role: '가족의 따뜻한 심장',
+          desc: '집 안 곳곳에 사랑을 채워 넣는<br />우리 가족의 든든한 버팀목',
+          tags: ['독서', '산책', '베이킹'],
+          type: 'normal'
+        },
+        {
+          emoji: '🌱',
+          name: '뽀짝',
+          role: '곧 만날 새 가족',
+          desc: '엄마 배 속에서 무럭무럭 자라는<br />우리 가족의 작은 기적',
+          tags: [],
+          type: 'baby'
+        }
+      ],
+
+      message: {
+        title: '가족 이야기',
+        subtitle: '우리가 함께 만들어 가는 이야기',
+        text: '우리 가족은 <strong>서로를 있는 그대로 사랑하고</strong>, 함께하는 매 순간을 소중히 여깁니다.<br /><br />작은 식탁 앞에 모여 밥을 먹고, 함께 웃고 이야기하는 평범한 일상이<br />우리에게는 가장 <strong>빛나는 행복</strong>입니다.<br /><br />곧 세 식구가 될 날을 설레는 마음으로 기다리며,<br />오늘도 우리만의 따뜻한 하루를 만들어 갑니다.'
+      },
+
+      values: [
+        { icon: '❤️', title: '사랑', desc: '말과 행동으로 매일 표현하는 진심 어린 사랑' },
+        { icon: '🌿', title: '성장', desc: '함께 배우고 변화하며 더 나은 우리가 되기' },
+        { icon: '😄', title: '행복', desc: '작은 것에 감사하며 매일 웃음을 찾기' },
+        { icon: '🤝', title: '신뢰', desc: '어떤 순간에도 서로를 믿고 의지하기' }
+      ]
+    };
+
+    // ── 렌더링 함수 ─────────────────────────────────────────────
+    function renderHero() {
+      document.getElementById('hero-root').innerHTML = `
+        <div class="hero-badge">우리 가족을 소개합니다 🏠</div>
+        <h1>${FAMILY_DATA.familyName}</h1>
+        <p class="hero-sub">${FAMILY_DATA.slogan}</p>
+      `;
+    }
+
+    function renderMembers() {
+      const cards = FAMILY_DATA.members.map((m, i) => {
+        const isBaby = m.type === 'baby';
+        const babyClass = isBaby ? ' baby-card' : '';
+        const tagsHtml = m.tags.length
+          ? `<div class="tag-list">${m.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>`
+          : '';
+        const ddayHtml = isBaby
+          ? `<div class="dday-box">
+              <div class="dday-label">출산 예정일까지</div>
+              <div class="dday-number" id="dday-number">—</div>
+              <div class="dday-sub" id="dday-sub">날짜를 설정해 주세요</div>
+            </div>`
+          : '';
+
+        return `
+          <div class="card${babyClass}" data-delay="${i * 150}">
+            <span class="card-emoji">${m.emoji}</span>
+            <h3>${m.name}</h3>
+            <div class="card-role">${m.role}</div>
+            <p class="card-desc">${m.desc}</p>
+            ${tagsHtml}
+            ${ddayHtml}
+          </div>`;
+      }).join('');
+
+      document.getElementById('members-root').innerHTML = `
+        <div class="section-header">
+          <h2>가족 구성원</h2>
+          <p>각자 다른 빛깔로 빛나는 우리 가족</p>
+          <div class="line"></div>
+        </div>
+        <div class="card-grid">${cards}</div>
+      `;
+    }
+
+    function renderMessage() {
+      const d = FAMILY_DATA.message;
+      document.getElementById('message-root').innerHTML = `
+        <div class="section-header">
+          <h2>${d.title}</h2>
+          <p>${d.subtitle}</p>
+          <div class="line"></div>
+        </div>
+        <div class="message-card">
+          <span class="quote-mark">"</span>
+          <p>${d.text}</p>
+        </div>
+      `;
+    }
+
+    function renderValues() {
+      const items = FAMILY_DATA.values.map((v, i) => `
+        <div class="value-item" data-delay="${i * 100}">
+          <div class="value-icon">${v.icon}</div>
+          <h4>${v.title}</h4>
+          <p>${v.desc}</p>
+        </div>
+      `).join('');
+
+      document.getElementById('values-root').innerHTML = `
+        <div class="section-header">
+          <h2>우리 가족의 가치관</h2>
+          <p>함께 지켜 나가는 것들</p>
+          <div class="line"></div>
+        </div>
+        <div class="values-grid">${items}</div>
+      `;
+    }
+
+    function renderFooter() {
+      document.getElementById('footer-root').innerHTML = `
+        <p class="motto">"${FAMILY_DATA.motto}"</p>
+        <p>${FAMILY_DATA.familyName} · ${FAMILY_DATA.year}</p>
+      `;
+    }
+
+    // ── D-day 계산 ──────────────────────────────────────────────
+    function updateDday() {
+      const el = document.getElementById('dday-number');
+      const sub = document.getElementById('dday-sub');
+      if (!FAMILY_DATA.dueDate || !el) return;
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const due = new Date(FAMILY_DATA.dueDate);
+      due.setHours(0, 0, 0, 0);
+      const diff = Math.round((due - today) / (1000 * 60 * 60 * 24));
+
+      if (diff > 0) {
+        el.textContent = `D-${diff}`;
+        sub.textContent = `${FAMILY_DATA.dueDate.replace(/-/g, '. ')} 예정`;
+      } else if (diff === 0) {
+        el.textContent = 'D-Day! 🎉';
+        sub.textContent = '오늘이 바로 그 날!';
+      } else {
+        el.textContent = `D+${Math.abs(diff)}`;
+        sub.textContent = `${FAMILY_DATA.dueDate.replace(/-/g, '. ')} 출생`;
+      }
+    }
+
+    // ── 초기화 ──────────────────────────────────────────────────
+    function init() {
+      renderHero();
+      renderMembers();
+      renderMessage();
+      renderValues();
+      renderFooter();
+
+      updateDday();
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            const el = entry.target;
+            const delay = parseInt(el.dataset.delay ?? '0', 10);
+            setTimeout(() => el.classList.add('visible'), delay);
+            observer.unobserve(el);
+          });
+        },
+        { threshold: 0.15 }
+      );
+
+      document.querySelectorAll('.card, .message-card, .value-item').forEach((el) => {
+        observer.observe(el);
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
